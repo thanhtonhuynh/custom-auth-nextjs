@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import UserButton from './UserButton';
 import { Button } from './ui/button';
-// import { useSession } from '@/contexts/SessionProvider';
+import { useSession } from '@/contexts/SessionProvider';
 
 export default function NavBarClient() {
-  // const { user } = useSession();
+  const { user } = useSession();
 
   return (
     <header className="sticky top-0 bg-background px-3 shadow-sm">
@@ -15,13 +15,13 @@ export default function NavBarClient() {
           Lucia Auth
         </Link>
 
-        {/* {user ? (
+        {user ? (
           <UserButton user={user} />
         ) : (
           <Button asChild>
             <Link href={`/login`}>Login</Link>
           </Button>
-        )} */}
+        )}
       </nav>
     </header>
   );

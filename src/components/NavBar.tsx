@@ -1,10 +1,10 @@
 import Link from 'next/link';
-// import { auth } from '@/auth';
 import UserButton from './UserButton';
 import { Button } from './ui/button';
+import { getCurrentSession } from '@/lib/session';
 
 export default async function NavBar() {
-  // const { user } = await auth();
+  const { user } = await getCurrentSession();
 
   return (
     <header className="sticky top-0 bg-background px-3 shadow-sm">
@@ -13,13 +13,13 @@ export default async function NavBar() {
           Lucia Auth
         </Link>
 
-        {/* {user ? (
+        {user ? (
           <UserButton user={user} />
         ) : (
           <Button asChild>
             <Link href={`/login`}>Login</Link>
           </Button>
-        )} */}
+        )}
       </nav>
     </header>
   );

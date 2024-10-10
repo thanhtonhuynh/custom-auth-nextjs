@@ -12,8 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { User } from 'lucia';
-import { logout } from '@/app/(auth)/actions';
+import { User } from '@/lib/session';
+// import { logout } from '@/app/(auth)/actions';
 
 interface UserButtonProps {
   user: User;
@@ -53,13 +53,13 @@ export default function UserButton({ user }: UserButtonProps) {
           )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
+        {/* <DropdownMenuItem asChild>
           <form action={logout}>
             <button type="submit" className="flex w-full items-center">
               <LogOut className="mr-2 h-4 w-4" /> Sign Out
             </button>
           </form>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
