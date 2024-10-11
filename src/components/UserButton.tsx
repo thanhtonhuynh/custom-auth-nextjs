@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { User } from '@/lib/session';
-// import { logout } from '@/app/(auth)/actions';
+import { logoutAction } from '@/app/(auth)/actions';
 
 interface UserButtonProps {
   user: User;
@@ -33,33 +33,38 @@ export default function UserButton({ user }: UserButtonProps) {
           />
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>{user.name || 'User'}</DropdownMenuLabel>
+
         <DropdownMenuSeparator />
+
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/settings">
+            <Link href="/settings" className="cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </Link>
           </DropdownMenuItem>
           {user.role === 'admin' && (
             <DropdownMenuItem asChild>
-              <Link href="/admin">
+              <Link href="/admin" className="cursor-pointer">
                 <Lock className="mr-2 h-4 w-4" />
                 Admin
               </Link>
             </DropdownMenuItem>
           )}
         </DropdownMenuGroup>
+
         <DropdownMenuSeparator />
-        {/* <DropdownMenuItem asChild>
-          <form action={logout}>
+
+        <DropdownMenuItem asChild>
+          <form action={logoutAction}>
             <button type="submit" className="flex w-full items-center">
               <LogOut className="mr-2 h-4 w-4" /> Sign Out
             </button>
           </form>
-        </DropdownMenuItem> */}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

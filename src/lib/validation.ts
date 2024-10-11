@@ -1,44 +1,47 @@
 import { z } from 'zod';
 
-const requiredString = z.string().trim().min(1, 'Required');
+const trimmedString = z.string().trim();
+const requiredString = trimmedString.min(1, 'Required');
 
 // Sign up
-export const signUpSchema = z.object({
+export const SignupSchema = z.object({
   email: requiredString.email('Invalid email address'),
-  password: requiredString.min(8, 'Password must be at least 8 characters'),
+  password: trimmedString.min(8, 'Password must be at least 8 characters'),
 });
-export type SignUpValues = z.infer<typeof signUpSchema>;
+export type SignupSchemaTypes = z.infer<typeof SignupSchema>;
 
 // Login
-export const loginSchema = z.object({
+export const LoginSchema = z.object({
   email: requiredString.email('Invalid email address'),
   password: requiredString,
 });
-export type LoginValues = z.infer<typeof loginSchema>;
+export type LoginSchemaTypes = z.infer<typeof LoginSchema>;
 
 // Update profile
-export const updateProfileSchema = z.object({
-  name: z.string().trim().min(1, 'Cannot be empty'),
+export const UpdateProfileSchema = z.object({
+  name: requiredString,
 });
-export type UpdateProfileValues = z.infer<typeof updateProfileSchema>;
+export type UpdateProfileSchemaTypes = z.infer<typeof UpdateProfileSchema>;
 
 // Verification code
-export const verificationCodeSchema = z.object({
-  code: z.string().length(6, 'Invalid verification code'),
+export const VerificationCodeSchema = z.object({
+  code: trimmedString.min(6, 'Your verification code must be 6 characters.'),
 });
-export type VerificationCodeValues = z.infer<typeof verificationCodeSchema>;
+export type VerificationCodeSchemaTypes = z.infer<
+  typeof VerificationCodeSchema
+>;
 
 // Forgot password
-export const forgotPasswordSchema = z.object({
+export const ForgotPasswordSchema = z.object({
   email: requiredString.email('Invalid email address'),
 });
-export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+export type ForgotPasswordSchemaTypes = z.infer<typeof ForgotPasswordSchema>;
 
 // Reset password
-export const resetPasswordSchema = z
+export const ResetPasswordSchema = z
   .object({
-    password: requiredString.min(8, 'Password must be at least 8 characters'),
-    confirmPassword: requiredString.min(
+    password: trimmedString.min(8, 'Password must be at least 8 characters'),
+    confirmPassword: trimmedString.min(
       8,
       'Password must be at least 8 characters'
     ),
@@ -47,4 +50,4 @@ export const resetPasswordSchema = z
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });
-export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
+export type ResetPasswordSchemaTypes = z.infer<typeof ResetPasswordSchema>;

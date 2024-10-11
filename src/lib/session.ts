@@ -24,7 +24,11 @@ export type SessionValidationResult =
   | { session: Session; user: User }
   | { session: null; user: null };
 
-// Validate a session token
+/**
+ * Validate a session token
+ * @param token - The session token
+ * @returns The session and user if the token is valid, otherwise null
+ */
 export async function validateSessionToken(
   token: string
 ): Promise<SessionValidationResult> {
@@ -57,7 +61,9 @@ export async function validateSessionToken(
   return { session, user };
 }
 
-// Get the current session
+/**
+ * Get the current session from the browser cookie and validate it
+ */
 export const getCurrentSession = cache(
   async (): Promise<SessionValidationResult> => {
     const token = cookies().get('session')?.value ?? null;
@@ -69,7 +75,10 @@ export const getCurrentSession = cache(
   }
 );
 
-// Generate a new session token
+/**
+ * Generate a new session token
+ * @returns A new session token
+ */
 export function generateSessionToken(): string {
   const bytes = new Uint8Array(32);
   crypto.getRandomValues(bytes);
@@ -77,7 +86,12 @@ export function generateSessionToken(): string {
   return token;
 }
 
-// Create a new session
+/**
+ * Create a new session in the database
+ * @param token - The session token
+ * @param userId - The user ID
+ * @returns The created session
+ */
 export async function createSession(
   token: string,
   userId: string
@@ -92,17 +106,27 @@ export async function createSession(
   return session;
 }
 
-// Invalidate a session by ID
+/**
+ * Invalidate a session by ID, deleting it from the database
+ * @param sessionId
+ */
 export async function invalidateSession(sessionId: string) {
   await prisma.session.delete({ where: { id: sessionId } });
 }
 
-// Invalidate all sessions for a user
+/**
+ * Invalidate all sessions for a user, deleting them from the database
+ * @param userId
+ */
 export async function invalidateUserSessions(userId: string) {
   await prisma.session.deleteMany({ where: { userId } });
 }
 
-// Set session token cookie
+/**
+ * Set the session token to browser cookie
+ * @param token - The session token
+ * @param expiresAt - The expiration date for the session token
+ */
 export function setSessionTokenCookie(token: string, expiresAt: Date) {
   cookies().set('session', token, {
     httpOnly: true,
@@ -113,7 +137,9 @@ export function setSessionTokenCookie(token: string, expiresAt: Date) {
   });
 }
 
-// Delete session token cookie
+/**
+ * Delete the session token from the browser cookie
+ */
 export function deleteSessionTokenCookie() {
   cookies().set('session', '', {
     httpOnly: true,

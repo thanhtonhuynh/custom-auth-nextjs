@@ -1,39 +1,39 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useState, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { LoadingButton } from '@/components/LoadingButton';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
 import { PasswordInput } from '@/components/PasswordInput';
+import { LoadingButton } from '@/components/LoadingButton';
 import { ErrorMessage } from '@/components/Message';
-import Link from 'next/link';
-import { loginAction } from './actions';
-import { LoginSchema, LoginSchemaTypes } from '@/lib/validation';
+import { signUpAction } from './actions';
+import { SignupSchema, SignupSchemaTypes } from '@/lib/validation';
 
-export function LoginForm() {
+export function SignUpForm() {
   const [error, setError] = useState<string>();
   const [isPending, startTransition] = useTransition();
-  const form = useForm<LoginSchemaTypes>({
-    resolver: zodResolver(LoginSchema),
+  const form = useForm<SignupSchemaTypes>({
+    resolver: zodResolver(SignupSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
 
-  async function onSubmit(data: LoginSchemaTypes) {
+  async function onSubmit(data: SignupSchemaTypes) {
     setError(undefined);
     startTransition(async () => {
-      const { error } = await loginAction(data);
+      const { error } = await signUpAction(data);
 
       if (error) setError(error);
     });
@@ -41,7 +41,10 @@ export function LoginForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col w-1/2 space-y-4"
+      >
         {error && <ErrorMessage message={error} />}
 
         <FormField
@@ -63,15 +66,10 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex items-center justify-between">
-                Password
-                <Link
-                  className="text-xs text-blue-500 hover:underline"
-                  href="/login/forgot-password"
-                >
-                  Forgot password?
-                </Link>
-              </FormLabel>
+              <FormLabel>Password</FormLabel>
+              <FormDescription>
+                Must be at least 8 characters long
+              </FormDescription>
               <FormControl>
                 <PasswordInput {...field} placeholder="Password" />
               </FormControl>
@@ -81,7 +79,7 @@ export function LoginForm() {
         />
 
         <LoadingButton type="submit" className="w-full" loading={isPending}>
-          Login
+          Create account
         </LoadingButton>
       </form>
     </Form>

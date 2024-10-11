@@ -7,7 +7,7 @@ export class GenericError extends Error {
 
 export class RateLimitError extends Error {
   constructor() {
-    super('Rate limit exceeded');
+    super('Too many attempts. Please try again later.');
     this.name = 'RateLimitError';
   }
 }
@@ -21,7 +21,9 @@ export class AuthenticationError extends Error {
 
 export class TokenExpiredError extends Error {
   constructor() {
-    super('Token has expired');
+    super(
+      'Invalid or expired verification code. Please try again or request a new one.'
+    );
     this.name = 'TokenExpiredError';
   }
 }

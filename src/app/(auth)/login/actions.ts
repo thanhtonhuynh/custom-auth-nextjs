@@ -1,6 +1,5 @@
 'use server';
 
-import { loginSchema, LoginValues } from '@/lib/validation';
 import { redirect } from 'next/navigation';
 import {
   createSession,
@@ -11,10 +10,16 @@ import { rateLimitByKey } from '@/lib/limiter';
 import { RateLimitError } from '@/lib/errors';
 import { getUserByEmail, getUserPasswordHash } from '@/data/users';
 import { verifyPassword } from '@/lib/password';
+import { isRedirectError } from 'next/dist/client/components/redirect';
+import {
+  getUserEmailVerificationRequestByUserId,
+  setEmailVerificationRequestCookie,
+} from '@/lib/email-verification';
+import { LoginSchema, LoginSchemaTypes } from '@/lib/validation';
 
-export async function loginAction(credentials: LoginValues) {
+export async function loginAction(data: LoginSchemaTypes) {
   try {
-    const { email, password } = loginSchema.parse(credentials);
+    const { email, password } = LoginSchema.parse(data);
 
     await rateLimitByKey({ key: email, limit: 3, window: 10000 });
 
@@ -33,19 +38,29 @@ export async function loginAction(credentials: LoginValues) {
       return { error: 'Invalid email or password' };
     }
 
-    if (!existingUser.emailVerified) {
-      redirect(`/verify-email?email=${email}`);
-    }
-
     const sessionToken = generateSessionToken();
     const session = await createSession(sessionToken, existingUser.id);
     setSessionTokenCookie(sessionToken, session.expiresAt);
-  } catch (error) {
-    if (error instanceof RateLimitError) {
-      return { error: 'Too many login attempts. Please try again later.' };
+
+    if (!existingUser.emailVerified) {
+      const emailVerificationRequest =
+        await getUserEmailVerificationRequestByUserId(existingUser.id);
+
+      if (emailVerificationRequest) {
+        setEmailVerificationRequestCookie(emailVerificationRequest);
+      }
+
+      redirect(`/verify-email`);
     }
-    console.error(error);
-    return { error: 'Something went wrong. Please try again.' };
+  } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+    if (error instanceof RateLimitError) {
+      return { error: error.message };
+    }
+    // console.error(error);
+    return { error: 'Login failed. Please try again.' };
   }
 
   redirect('/');

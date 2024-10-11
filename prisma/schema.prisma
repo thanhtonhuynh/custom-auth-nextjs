@@ -25,10 +25,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sessions            Session[]
-  accounts            Account[]
-  verificationCodes   VerificationCode[]
-  passwordResetTokens PasswordResetToken[]
+  sessions                 Session[]
+  accounts                 Account[]
+  emailVerificationRequest EmailVerificationRequest?
+  passwordResetTokens      PasswordResetToken[]
 }
 
 model Account {
@@ -50,7 +50,7 @@ model Session {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model VerificationCode {
+model EmailVerificationRequest {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   userId    String   @unique @db.ObjectId
   code      String
