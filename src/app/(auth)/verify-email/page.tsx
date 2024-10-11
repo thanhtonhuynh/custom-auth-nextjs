@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation';
 import { getCurrentSession } from '@/lib/session';
 import { getUserEmailVerificationRequestFromCookie } from '@/lib/email-verification';
 import { EmailVerificationForm } from './EmailVerificationForm';
-import { InputOTPForm } from './test';
 
 export default async function Page() {
   const { user } = await getCurrentSession();
