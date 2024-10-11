@@ -1,12 +1,3 @@
-// import prisma from '@/lib/prisma';
-// import { User } from '@prisma/client';
-// import { cache } from 'react';
-// import { hash, verify } from '@node-rs/argon2';
-// import { generateIdFromEntropySize } from 'lucia';
-// import { encodeHex } from 'oslo/encoding';
-// import { sha256 } from 'oslo/crypto';
-// import { createDate, TimeSpan } from 'oslo';
-
 import { hashPassword } from '@/lib/password';
 import prisma from '@/lib/prisma';
 import { User } from '@/lib/session';
@@ -77,40 +68,12 @@ export async function updateUser(userId: string, data: Partial<User>) {
   return user;
 }
 
-// // Create Password Reset Token
-// export async function createPasswordResetToken(userId: string) {
-//   // create new token
-//   const token = generateIdFromEntropySize(25); // 40 characters
-//   const tokenHash = encodeHex(await sha256(new TextEncoder().encode(token)));
+// Update User Password
+export async function updateUserPassword(userId: string, password: string) {
+  const passwordHash = await hashPassword(password);
 
-//   // invalidate any existing tokens
-//   await prisma.passwordResetToken.deleteMany({
-//     where: { userId },
-//   });
-
-//   // save token to database
-//   await prisma.passwordResetToken.create({
-//     data: {
-//       userId,
-//       tokenHash,
-//       expiresAt: createDate(new TimeSpan(2, 'h')),
-//     },
-//   });
-
-//   return token;
-// }
-
-// // Validate Password Reset Token
-// export async function validatePasswordResetToken(token: string) {
-//   const tokenHash = encodeHex(await sha256(new TextEncoder().encode(token)));
-//   const dbToken = await prisma.passwordResetToken.findFirst({
-//     where: {
-//       tokenHash,
-//       expiresAt: {
-//         gte: new Date(),
-//       },
-//     },
-//   });
-
-//   return dbToken;
-// }
+  await prisma.user.update({
+    where: { id: userId },
+    data: { passwordHash },
+  });
+}
