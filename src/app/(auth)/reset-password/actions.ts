@@ -14,7 +14,6 @@ import {
   invalidatePasswordResetToken,
   validatePasswordResetRequest,
 } from '@/lib/password-reset';
-import { redirect } from 'next/navigation';
 
 export async function resetPasswordAction(data: ResetPasswordSchemaTypes) {
   try {
@@ -30,9 +29,11 @@ export async function resetPasswordAction(data: ResetPasswordSchemaTypes) {
       return { error: 'Invalid or expired token' };
     }
 
-    const { password } = ResetPasswordSchema.parse(data);
+    const { password, logOutOtherDevices } = ResetPasswordSchema.parse(data);
 
-    await invalidateUserSessions(pwResetToken.userId);
+    if (logOutOtherDevices) {
+      await invalidateUserSessions(pwResetToken.userId);
+    }
 
     await updateUserPassword(pwResetToken.userId, password);
 

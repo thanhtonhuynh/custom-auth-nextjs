@@ -45,6 +45,7 @@ export const ResetPasswordSchema = z
       8,
       'Password must be at least 8 characters'
     ),
+    logOutOtherDevices: z.boolean().default(false).optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',

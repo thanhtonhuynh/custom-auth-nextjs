@@ -21,6 +21,7 @@ import {
 } from '@/lib/validation';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export function ResetPasswordForm() {
   const [error, setError] = useState<string>();
@@ -30,6 +31,7 @@ export function ResetPasswordForm() {
     defaultValues: {
       password: '',
       confirmPassword: '',
+      logOutOtherDevices: true,
     },
   });
   const router = useRouter();
@@ -50,7 +52,7 @@ export function ResetPasswordForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {error && <ErrorMessage message={error} />}
 
         <FormField
@@ -77,6 +79,23 @@ export function ResetPasswordForm() {
                 <PasswordInput {...field} placeholder="Confirm Password" />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="logOutOtherDevices"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+
+              <FormLabel>Sign out of other devices</FormLabel>
             </FormItem>
           )}
         />
