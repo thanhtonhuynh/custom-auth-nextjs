@@ -52,3 +52,18 @@ export const ResetPasswordSchema = z
     path: ['confirmPassword'],
   });
 export type ResetPasswordSchemaTypes = z.infer<typeof ResetPasswordSchema>;
+
+// Set up two-factor authentication
+export const TwoFactorSetupSchema = z.object({
+  code: trimmedString.min(6, 'Your code must be 6 characters.'),
+  encodedTOTPKey: trimmedString.length(28),
+});
+export type TwoFactorSetupSchemaTypes = z.infer<typeof TwoFactorSetupSchema>;
+
+// Verify two-factor authentication
+export const TwoFactorVerificationSchema = z.object({
+  code: trimmedString.min(6, 'Your code must be 6 characters.'),
+});
+export type TwoFactorVerificationSchemaTypes = z.infer<
+  typeof TwoFactorVerificationSchema
+>;

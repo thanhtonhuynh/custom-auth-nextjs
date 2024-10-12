@@ -2,11 +2,12 @@ import { getCurrentSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 
 export default async function Page() {
-  const { user } = await getCurrentSession();
+  const { session, user } = await getCurrentSession();
 
-  if (!user) redirect('/login');
-  if (!user.emailVerified) redirect('/verify-email');
+  if (!session) redirect('/login');
   if (user.role !== 'admin') redirect('/');
+  if (!user.emailVerified) redirect('/verify-email');
+  if (user.twoFactorEnabled && !session.twoFactorVerified) redirect('/2fa');
 
   return (
     <main className="mx-auto my-10 space-y-3">

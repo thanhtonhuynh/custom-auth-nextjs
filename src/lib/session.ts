@@ -18,6 +18,13 @@ export type User = {
   emailVerified: boolean;
   image: string | null;
   role: string | null;
+  twoFactorEnabled: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type SessionFlags = {
+  twoFactorVerified: boolean;
 };
 
 export type SessionValidationResult =
@@ -94,16 +101,30 @@ export function generateSessionToken(): string {
  */
 export async function createSession(
   token: string,
-  userId: string
+  userId: string,
+  flags: SessionFlags
 ): Promise<Session> {
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
-  const session: Session = {
-    id: sessionId,
-    userId,
-    expiresAt: new Date(Date.now() + SESSION_TTL),
-  };
-  await prisma.session.create({ data: session });
+  const session = await prisma.session.create({
+    data: {
+      id: sessionId,
+      userId,
+      expiresAt: new Date(Date.now() + SESSION_TTL),
+      twoFactorVerified: flags.twoFactorVerified,
+    },
+  });
   return session;
+}
+
+/**
+ * Set the session as two-factor verified
+ * @param sessionId
+ */
+export async function setSessionAsTwoFactorVerified(sessionId: string) {
+  await prisma.session.update({
+    where: { id: sessionId },
+    data: { twoFactorVerified: true },
+  });
 }
 
 /**

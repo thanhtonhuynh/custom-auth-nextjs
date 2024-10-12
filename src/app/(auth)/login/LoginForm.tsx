@@ -37,6 +37,8 @@ export function LoginForm() {
 
       if (error) setError(error);
     });
+
+    form.resetField('password');
   }
 
   return (

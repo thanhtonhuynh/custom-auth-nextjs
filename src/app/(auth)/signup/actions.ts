@@ -41,7 +41,9 @@ export async function signUpAction(data: SignupSchemaTypes) {
     setEmailVerificationRequestCookie(emailVerificationRequest);
 
     const sessionToken = generateSessionToken();
-    const session = await createSession(sessionToken, user.id);
+    const session = await createSession(sessionToken, user.id, {
+      twoFactorVerified: false,
+    });
     setSessionTokenCookie(sessionToken, session.expiresAt);
   } catch (error) {
     if (error instanceof RateLimitError) {

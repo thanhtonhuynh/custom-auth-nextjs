@@ -4,9 +4,10 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 export default async function Home() {
-  const { user } = await getCurrentSession();
-  if (!user) redirect('/login');
+  const { session, user } = await getCurrentSession();
+  if (!session) redirect('/login');
   if (!user.emailVerified) redirect('/verify-email');
+  if (user.twoFactorEnabled && !session.twoFactorVerified) redirect('/2fa');
 
   const users = await prisma.user.findMany();
 

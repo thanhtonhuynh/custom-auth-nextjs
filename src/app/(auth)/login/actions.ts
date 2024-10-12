@@ -39,7 +39,9 @@ export async function loginAction(data: LoginSchemaTypes) {
     }
 
     const sessionToken = generateSessionToken();
-    const session = await createSession(sessionToken, existingUser.id);
+    const session = await createSession(sessionToken, existingUser.id, {
+      twoFactorVerified: false,
+    });
     setSessionTokenCookie(sessionToken, session.expiresAt);
 
     if (!existingUser.emailVerified) {
@@ -52,6 +54,10 @@ export async function loginAction(data: LoginSchemaTypes) {
 
       redirect(`/verify-email`);
     }
+
+    if (existingUser.twoFactorEnabled) {
+      redirect(`/2fa`);
+    }
   } catch (error) {
     if (isRedirectError(error)) {
       throw error;
@@ -59,7 +65,7 @@ export async function loginAction(data: LoginSchemaTypes) {
     if (error instanceof RateLimitError) {
       return { error: error.message };
     }
-    // console.error(error);
+    console.error(error);
     return { error: 'Login failed. Please try again.' };
   }
 

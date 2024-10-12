@@ -41,9 +41,9 @@ export default function UserButton({ user }: UserButtonProps) {
 
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/settings" className="cursor-pointer">
+            <Link href="/2fa/setup" className="cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+              <span>{user.twoFactorEnabled ? 'Update ' : 'Setup '} 2FA</span>
             </Link>
           </DropdownMenuItem>
           {user.role === 'admin' && (
