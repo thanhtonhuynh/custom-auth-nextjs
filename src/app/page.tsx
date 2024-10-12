@@ -1,13 +1,13 @@
-import prisma from '@/lib/prisma';
-import { getCurrentSession } from '@/lib/session';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import prisma from "@/lib/prisma";
+import { getCurrentSession } from "@/lib/session";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const { session, user } = await getCurrentSession();
-  if (!session) redirect('/login');
-  if (!user.emailVerified) redirect('/verify-email');
-  if (user.twoFactorEnabled && !session.twoFactorVerified) redirect('/2fa');
+  if (!session) redirect("/login");
+  if (!user.emailVerified) redirect("/verify-email");
+  if (user.twoFactorEnabled && !session.twoFactorVerified) redirect("/2fa");
 
   const users = await prisma.user.findMany();
 

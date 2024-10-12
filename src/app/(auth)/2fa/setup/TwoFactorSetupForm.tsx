@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
 import {
   TwoFactorSetupSchema,
   TwoFactorSetupSchemaTypes,
-} from '@/lib/validation';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTransition } from 'react';
-import { useForm } from 'react-hook-form';
-import { setup2FAAction } from './actions';
+} from "@/lib/validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { setup2FAAction } from "./actions";
 import {
   Form,
   FormControl,
@@ -15,14 +15,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { LoadingButton } from '@/components/LoadingButton';
-import { toast } from 'sonner';
+} from "@/components/ui/form";
+import { LoadingButton } from "@/components/LoadingButton";
+import { toast } from "sonner";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from '@/components/ui/input-otp';
+} from "@/components/ui/input-otp";
+import { useRouter } from "next/navigation";
 
 type TwoFactorSetupFormProps = {
   encodedTOTPKey: string;
@@ -35,10 +36,11 @@ export function TwoFactorSetupForm({
   const form = useForm<TwoFactorSetupSchemaTypes>({
     resolver: zodResolver(TwoFactorSetupSchema),
     defaultValues: {
-      code: '',
+      code: "",
       encodedTOTPKey: encodedTOTPKey,
     },
   });
+  const router = useRouter();
 
   async function onSubmit(data: TwoFactorSetupSchemaTypes) {
     startTransition(async () => {
@@ -47,7 +49,8 @@ export function TwoFactorSetupForm({
         toast.error(error);
         return;
       }
-      toast.success('Two-factor authentication has been set up.');
+      toast.success("Two-factor authentication has been set up successfully!");
+      router.push("/");
     });
 
     form.reset();
@@ -57,7 +60,7 @@ export function TwoFactorSetupForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 border rounded p-2 self-center"
+        className="space-y-4 self-center rounded border p-2"
       >
         <FormField
           control={form.control}
@@ -94,7 +97,7 @@ export function TwoFactorSetupForm({
 
         <LoadingButton
           type="submit"
-          className="w-1/2 mx-auto"
+          className="mx-auto w-1/2"
           loading={isPending}
         >
           Submit
